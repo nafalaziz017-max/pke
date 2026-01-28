@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DompetHarian</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{font-family:Poppins}
+body{background:#f9fafb;padding-bottom:70px}
+.dark-mode{background:#1f2937;color:#f3f4f6}
+
+.card{
+  border:none;
+  border-radius:16px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  animation:fadeUp .5s ease;
+}
+.dark-mode .card{background:#374151}
+
+.balance{
+  padding:20px;
+  border-radius:16px;
+  color:#fff;
+  text-align:center;
+  transition:transform .3s ease;
+}
+.balance:hover{transform:translateY(-4px)}
+.income{background:#10b981}
+.expense{background:#ef4444}
+.total{background:#3b82f6}
+
+.transaction{
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  background:#f3f4f6;
+  animation:fadeUp .4s ease;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.transaction:hover{
+  transform:scale(1.02);
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+}
+.dark-mode .transaction{background:#1f2937}
+
+button{
+  transition:transform .15s ease,box-shadow .15s ease;
+}
+button:active{transform:scale(.95)}
+
+.theme-toggle{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:55px;
+  height:55px;
+  border:none;
+  border-radius:50%;
+  background:#10b981;
+  color:#fff;
+  font-size:22px;
+  animation:pulse 2.5s infinite;
+}
+
+/* Animations */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(16,185,129,.6)}
+  70%{box-shadow:0 0 0 12px rgba(16,185,129,0)}
+  100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container my-4">
+<h3><i class="bi bi-wallet2"></i> DompetHarian</h3>
+
+<div class="row my-3">
+<div class="col-md-4 mb-2"><div class="balance income">Pemasukan<br><b id="incomeTotal">Rp 0</b></div></div>
+<div class="col-md-4 mb-2"><div class="balance expense">Pengeluaran<br><b id="expenseTotal">Rp 0</b></div></div>
+<div class="col-md-4 mb-2"><div class="balance total">Saldo<br><b id="balanceTotal">Rp 0</b></div></div>
+</div>
+
+<div class="card p-3 mb-3">
+<div class="row">
+<div class="col-md-6 mb-2">
+<label>📆 Filter Bulan</label>
+<input type="month" id="filterMonth" class="form-control" onchange="renderAll()">
+</div>
+<div class="col-md-6 mb-2">
+<label>📂 Filter Kategori</label>
+<select id="filterCategory" class="form-select" onchange="renderAll()">
+<option value="all">Semua Kategori</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="card p-3 mb-4">
+<h5>📊 Grafik Keuangan</h5>
+<canvas id="myChart"></canvas>
+</div>
+
+<div class="row">
+<div class="col-md-5 mb-3">
+<div class="card p-3">
+<h5 id="formTitle">Tambah Transaksi</h5>
+<form onsubmit="return submitData(event)">
+<select id="type" class="form-select mb-2" onchange="updateCategories()">
+<option value="expense">Pengeluaran</option>
+<option value="income">Pemasukan</option>
+</select>
+
+<select id="category" class="form-select mb-2"></select>
+<input id="desc" class="form-control mb-2" placeholder="Keterangan">
+<input id="amount" type="number" class="form-control mb-2" placeholder="Nominal">
+<input id="date" type="date" class="form-control mb-2">
+
+<button class="btn btn-success w-100">Simpan</button>
+<button type="button" class="btn btn-secondary w-100 mt-2" id="cancelBtn" onclick="cancelEdit()" style="display:none">Batal Edit</button>
+</form>
+</div>
+</div>
+
+<div class="col-md-7">
+<div class="card p-3">
+<h5>Riwayat Transaksi</h5>
+<div id="transactionList"></div>
+</div>
+</div>
+</div>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()">
+<i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+</button>
+
+<script>
+let data=JSON.parse(localStorage.getItem("dompetHarianData"))||[];
+let editId=null,chartInstance=null;
+
+const categories={
+income:["Gaji","Bonus","Investasi","Freelance","Lainnya"],
+expense:["Makan","Transport","Belanja","Tagihan","Hiburan","Kesehatan","Lainnya"]
+};
+
+date.value=new Date().toISOString().split("T")[0];
+updateCategories();renderAll();
+
+function getFilteredData(){
+let f=[...data];
+if(filterMonth.value)f=f.filter(d=>d.date.startsWith(filterMonth.value));
+if(filterCategory.value!=="all")f=f.filter(d=>d.category===filterCategory.value);
+return f;
+}
+
+function submitData(e){
+e.preventDefault();
+if(!desc.value||amount.value<=0)return alert("Data tidak valid");
+const obj={id:editId||Date.now(),type:type.value,category:category.value,desc:desc.value,amount:+amount.value,date:date.value};
+editId?data=data.map(d=>d.id===editId?obj:d):data.unshift(obj);
+editId=null;
+localStorage.setItem("dompetHarianData",JSON.stringify(data));
+e.target.reset();date.value=new Date().toISOString().split("T")[0];
+updateCategories();renderAll();return false;
+}
+
+function renderAll(){
+renderTransactions();renderBalance();renderChart();updateFilterCategories();
+}
+
+function renderTransactions(){
+const f=getFilteredData();
+transactionList.innerHTML=f.length?f.map(d=>`
+<div class="transaction d-flex justify-content-between">
+<div><b>${d.desc}</b><br><small>${d.date} • ${d.category}</small></div>
+<div>
+<b class="${d.type==="income"?"text-success":"text-danger"}">
+${d.type==="income"?"+":"-"} Rp ${d.amount.toLocaleString("id-ID")}
+</b><br>
+<button class="btn btn-sm btn-warning" onclick="editData(${d.id})">Edit</button>
+<button class="btn btn-sm btn-danger" onclick="deleteData(${d.id})">Hapus</button>
+</div>
+</div>`).join(""):"<p class='text-muted text-center'>Belum ada transaksi</p>";
+}
+
+function animateValue(el,start,end,d=500){
+let s=null;
+requestAnimationFrame(function a(t){
+if(!s)s=t;
+const p=Math.min((t-s)/d,1);
+el.innerText=rupiah(Math.floor(p*(end-start)+start));
+if(p<1)requestAnimationFrame(a);
+});
+}
+
+function renderBalance(){
+const f=getFilteredData();
+const inc=f.filter(d=>d.type==="income").reduce((s,d)=>s+d.amount,0);
+const exp=f.filter(d=>d.type==="expense").reduce((s,d)=>s+d.amount,0);
+animateValue(incomeTotal,0,inc);
+animateValue(expenseTotal,0,exp);
+animateValue(balanceTotal,0,inc-exp);
+}
+
+function renderChart(){
+const f=getFilteredData();
+const inc=f.filter(d=>d.type==="income").reduce((s,d)=>s+d.amount,0);
+const exp=f.filter(d=>d.type==="expense").reduce((s,d)=>s+d.amount,0);
+if(chartInstance)chartInstance.destroy();
+chartInstance=new Chart(myChart,{
+type:"doughnut",
+data:{labels:["Pemasukan","Pengeluaran"],datasets:[{data:[inc,exp],backgroundColor:["#10b981","#ef4444"]}]}
+});
+}
+
+function updateCategories(){
+category.innerHTML=categories[type.value].map(c=>`<option>${c}</option>`).join("");
+}
+
+function updateFilterCategories(){
+const cats=[...new Set(data.map(d=>d.category))];
+filterCategory.innerHTML='<option value="all">Semua Kategori</option>'+cats.map(c=>`<option>${c}</option>`).join("");
+}
+
+function editData(id){
+const d=data.find(x=>x.id===id);
+type.value=d.type;updateCategories();
+category.value=d.category;desc.value=d.desc;amount.value=d.amount;date.value=d.date;
+editId=id;formTitle.innerText="Edit Transaksi";cancelBtn.style.display="block";
+}
+
+function cancelEdit(){
+editId=null;formTitle.innerText="Tambah Transaksi";
+cancelBtn.style.display="none";document.querySelector("form").reset();updateCategories();
+}
+
+function deleteData(id){
+if(confirm("Hapus transaksi?")){
+data=data.filter(d=>d.id!==id);
+localStorage.setItem("dompetHarianData",JSON.stringify(data));
+renderAll();
+}
+}
+
+function toggleTheme(){
+document.body.classList.toggle("dark-mode");
+themeIcon.className=document.body.classList.contains("dark-mode")
+?"bi bi-sun-fill":"bi bi-moon-stars-fill";
+}
+
+const rupiah=n=>"Rp "+n.toLocaleString("id-ID");
+</script>
+
+</body>
+</html>
