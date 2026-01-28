@@ -6,33 +6,29 @@
 <title>DompetHarian</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
   --primary:#6366f1;
-  --secondary:#3b82f6;
-  --accent:#22d3ee;
   --success:#22c55e;
   --danger:#ef4444;
-  --surface:rgba(255,255,255,.9);
-  --radius:22px;
-  transition:all .9s ease;
+  --dark:#0f172a;
+  --glass:rgba(255,255,255,.85);
 }
 
 *{font-family:Poppins}
 
 body{
   min-height:100vh;
-  background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));
+  background:linear-gradient(135deg,#6366f1,#3b82f6,#22d3ee);
   background-attachment:fixed;
-  padding-bottom:110px;
-  transition:background 1.2s ease;
+  padding-bottom:90px;
 }
 
-.dark{
+.dark-mode{
   background:linear-gradient(135deg,#020617,#0f172a,#1e293b);
   color:#e5e7eb;
 }
@@ -42,78 +38,110 @@ body{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:26px;
+  margin-bottom:20px;
 }
 .app-title{
   font-weight:700;
-  letter-spacing:.3px;
+  color:#0f172a;
 }
-.dark .app-title{color:#f8fafc}
+.dark-mode .app-title{color:#f8fafc}
 
 /* CARD */
 .card{
   border:none;
-  border-radius:var(--radius);
-  background:var(--surface);
-  backdrop-filter:blur(16px);
-  box-shadow:0 20px 45px rgba(0,0,0,.2);
+  border-radius:20px;
+  background:var(--glass);
+  backdrop-filter:blur(14px);
+  box-shadow:0 15px 35px rgba(0,0,0,.15);
   animation:fadeUp .5s ease;
 }
-.dark .card{
-  background:rgba(15,23,42,.92);
+.dark-mode .card{
+  background:rgba(15,23,42,.85);
 }
 
 /* SUMMARY */
-.summary{
+.summary-card{
   color:#fff;
-  padding:26px;
-  border-radius:var(--radius);
-  box-shadow:0 14px 32px rgba(0,0,0,.3);
-  transition:.35s;
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  transition:.3s;
 }
-.summary:hover{
+.summary-card:hover{
   transform:translateY(-6px) scale(1.03);
 }
-.summary small{opacity:.9}
-.bg-income{
-  background:linear-gradient(135deg,var(--success),#16a34a);
+.bg-income{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.bg-expense{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.bg-balance{background:linear-gradient(135deg,#6366f1,#4338ca)}
+
+.summary-card small{opacity:.85}
+
+/* FILTER */
+.filter-box label{font-size:.9rem;font-weight:500}
+
+/* TRANSACTION */
+.transaction{
+  padding:14px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f8fafc,#e5e7eb);
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:.2s;
 }
-.bg-expense{
-  background:linear-gradient(135deg,var(--danger),#b91c1c);
+.transaction:hover{
+  transform:scale(1.02);
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
 }
-.bg-balance{
-  background:linear-gradient(135deg,var(--primary),#4338ca);
+.dark-mode .transaction{
+  background:linear-gradient(135deg,#1e293b,#020617);
 }
 
-/* CHART TITLE */
-.chart-title{
-  font-weight:600;
-  margin-bottom:10px;
+/* FORM */
+input,select{
+  border-radius:14px!important;
 }
+
+/* BUTTON */
+.btn{
+  border-radius:14px!important;
+  font-weight:500;
+}
+.btn:active{transform:scale(.95)}
 
 /* FLOAT BUTTON */
-.float-btn{
+.theme-toggle{
   position:fixed;
   right:22px;
   bottom:22px;
-  width:62px;
-  height:62px;
+  width:60px;
+  height:60px;
   border:none;
   border-radius:50%;
+  background:linear-gradient(135deg,#22c55e,#4ade80);
   color:#fff;
-  font-size:22px;
-  background:linear-gradient(135deg,var(--success),#4ade80);
-  box-shadow:0 14px 30px rgba(0,0,0,.4);
-  transition:.3s;
+  font-size:24px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+  animation:pulse 2.5s infinite;
 }
-.float-btn:hover{
-  transform:scale(1.05);
+
+/* EMPTY STATE */
+.empty{
+  text-align:center;
+  color:#6b7280;
+  padding:30px;
 }
 
 /* ANIMATION */
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(26px)}
+  from{opacity:0;transform:translateY(20px)}
   to{opacity:1;transform:translateY(0)}
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
+  70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
 }
 </style>
 </head>
@@ -124,95 +152,207 @@ body{
 
 <!-- HEADER -->
 <div class="app-header">
-  <h3 class="app-title">
-    <i class="bi bi-wallet2"></i> DompetHarian
-  </h3>
-  <span class="badge bg-primary">Smart Finance</span>
+  <h3 class="app-title"><i class="bi bi-wallet2"></i> DompetHarian</h3>
+  <span class="badge bg-primary">Personal Finance</span>
 </div>
 
 <!-- SUMMARY -->
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-3">
   <div class="col-md-4">
-    <div class="summary bg-income">
+    <div class="summary-card bg-income">
       <small>Pemasukan</small>
-      <h4 class="mt-1">Rp 3.500.000</h4>
+      <h4 id="incomeTotal">Rp 0</h4>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="summary bg-expense">
+    <div class="summary-card bg-expense">
       <small>Pengeluaran</small>
-      <h4 class="mt-1">Rp 1.250.000</h4>
+      <h4 id="expenseTotal">Rp 0</h4>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="summary bg-balance">
+    <div class="summary-card bg-balance">
       <small>Saldo</small>
-      <h4 class="mt-1">Rp 2.250.000</h4>
+      <h4 id="balanceTotal">Rp 0</h4>
     </div>
   </div>
+</div>
+
+<!-- FILTER -->
+<div class="card p-3 mb-3 filter-box">
+<div class="row g-2">
+  <div class="col-md-6">
+    <label>📅 Bulan</label>
+    <input type="month" id="filterMonth" class="form-control" onchange="renderAll()">
+  </div>
+  <div class="col-md-6">
+    <label>📂 Kategori</label>
+    <select id="filterCategory" class="form-select" onchange="renderAll()">
+      <option value="all">Semua Kategori</option>
+    </select>
+  </div>
+</div>
 </div>
 
 <!-- CHART -->
-<div class="card p-4">
-<h5 class="chart-title">📊 Ringkasan Keuangan</h5>
-<canvas id="chart"></canvas>
+<div class="card p-3 mb-4">
+<h5>📊 Ringkasan Keuangan</h5>
+<canvas id="myChart"></canvas>
 </div>
 
+<div class="row g-3">
+<!-- FORM -->
+<div class="col-md-5">
+<div class="card p-3">
+<h5 id="formTitle">Tambah Transaksi</h5>
+<form onsubmit="return submitData(event)">
+<select id="type" class="form-select mb-2" onchange="updateCategories()">
+<option value="expense">Pengeluaran</option>
+<option value="income">Pemasukan</option>
+</select>
+<select id="category" class="form-select mb-2"></select>
+<input id="desc" class="form-control mb-2" placeholder="Keterangan">
+<input id="amount" type="number" class="form-control mb-2" placeholder="Nominal">
+<input id="date" type="date" class="form-control mb-2">
+<button class="btn btn-success w-100">Simpan Transaksi</button>
+<button type="button" class="btn btn-secondary w-100 mt-2" id="cancelBtn" onclick="cancelEdit()" style="display:none">Batal Edit</button>
+</form>
+</div>
 </div>
 
-<!-- DARK MODE -->
-<button class="float-btn" onclick="toggleDark()">
+<!-- LIST -->
+<div class="col-md-7">
+<div class="card p-3">
+<h5>📜 Riwayat Transaksi</h5>
+<div id="transactionList"></div>
+</div>
+</div>
+</div>
+</div>
+
+<button class="theme-toggle" onclick="toggleTheme()">
 <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
 </button>
 
 <script>
-/* ===== AUTO COLOR ENGINE ===== */
-const themes=[
-  ["#6366f1","#3b82f6","#22d3ee"],
-  ["#8b5cf6","#7c3aed","#c084fc"],
-  ["#22c55e","#16a34a","#4ade80"],
-  ["#f97316","#ea580c","#fdba74"],
-  ["#ec4899","#db2777","#f9a8d4"]
-];
+let data=JSON.parse(localStorage.getItem("dompetHarianData"))||[];
+let editId=null,chartInstance=null;
 
-let index=0;
-function autoTheme(){
-  const [p,s,a]=themes[index];
-  document.documentElement.style.setProperty("--primary",p);
-  document.documentElement.style.setProperty("--secondary",s);
-  document.documentElement.style.setProperty("--accent",a);
-  index=(index+1)%themes.length;
-}
-setInterval(autoTheme,7000);
-autoTheme();
+const categories={
+income:["Gaji","Bonus","Investasi","Freelance","Lainnya"],
+expense:["Makan","Transport","Belanja","Tagihan","Hiburan","Kesehatan","Lainnya"]
+};
 
-/* DARK MODE */
-function toggleDark(){
-  document.body.classList.toggle("dark");
-  themeIcon.className=document.body.classList.contains("dark")
-  ?"bi bi-sun-fill":"bi bi-moon-stars-fill";
+date.value=new Date().toISOString().split("T")[0];
+updateCategories();renderAll();
+
+function getFilteredData(){
+let f=[...data];
+if(filterMonth.value)f=f.filter(d=>d.date.startsWith(filterMonth.value));
+if(filterCategory.value!=="all")f=f.filter(d=>d.category===filterCategory.value);
+return f;
 }
 
-/* CHART */
-new Chart(document.getElementById("chart"),{
-  type:"doughnut",
-  data:{
-    labels:["Pemasukan","Pengeluaran"],
-    datasets:[{
-      data:[70,30],
-      backgroundColor:[
-        getComputedStyle(document.documentElement).getPropertyValue('--success'),
-        getComputedStyle(document.documentElement).getPropertyValue('--danger')
-      ]
-    }]
-  },
-  options:{
-    cutout:"65%",
-    plugins:{
-      legend:{position:"bottom"}
-    }
-  }
+function submitData(e){
+e.preventDefault();
+if(!desc.value||amount.value<=0)return alert("Data tidak valid");
+const obj={id:editId||Date.now(),type:type.value,category:category.value,desc:desc.value,amount:+amount.value,date:date.value};
+editId?data=data.map(d=>d.id===editId?obj:d):data.unshift(obj);
+editId=null;
+localStorage.setItem("dompetHarianData",JSON.stringify(data));
+e.target.reset();date.value=new Date().toISOString().split("T")[0];
+updateCategories();renderAll();return false;
+}
+
+function renderAll(){
+renderTransactions();renderBalance();renderChart();updateFilterCategories();
+}
+
+function renderTransactions(){
+const f=getFilteredData();
+transactionList.innerHTML=f.length?f.map(d=>`
+<div class="transaction">
+<div>
+<b>${d.desc}</b><br>
+<small>${d.date} • ${d.category}</small>
+</div>
+<div class="text-end">
+<b class="${d.type==="income"?"text-success":"text-danger"}">
+${d.type==="income"?"+":"-"} Rp ${d.amount.toLocaleString("id-ID")}
+</b><br>
+<button class="btn btn-sm btn-warning" onclick="editData(${d.id})">Edit</button>
+<button class="btn btn-sm btn-danger" onclick="deleteData(${d.id})">Hapus</button>
+</div>
+</div>`).join(""):`<div class="empty">📭 Belum ada transaksi</div>`;
+}
+
+function animateValue(el,start,end,d=500){
+let s=null;
+requestAnimationFrame(function a(t){
+if(!s)s=t;
+const p=Math.min((t-s)/d,1);
+el.innerText=rupiah(Math.floor(p*(end-start)+start));
+if(p<1)requestAnimationFrame(a);
 });
+}
+
+function renderBalance(){
+const f=getFilteredData();
+const inc=f.filter(d=>d.type==="income").reduce((s,d)=>s+d.amount,0);
+const exp=f.filter(d=>d.type==="expense").reduce((s,d)=>s+d.amount,0);
+animateValue(incomeTotal,0,inc);
+animateValue(expenseTotal,0,exp);
+animateValue(balanceTotal,0,inc-exp);
+}
+
+function renderChart(){
+const f=getFilteredData();
+const inc=f.filter(d=>d.type==="income").reduce((s,d)=>s+d.amount,0);
+const exp=f.filter(d=>d.type==="expense").reduce((s,d)=>s+d.amount,0);
+if(chartInstance)chartInstance.destroy();
+chartInstance=new Chart(myChart,{
+type:"doughnut",
+data:{labels:["Pemasukan","Pengeluaran"],
+datasets:[{data:[inc,exp],backgroundColor:["#22c55e","#ef4444"]}]}
+});
+}
+
+function updateCategories(){
+category.innerHTML=categories[type.value].map(c=>`<option>${c}</option>`).join("");
+}
+
+function updateFilterCategories(){
+const cats=[...new Set(data.map(d=>d.category))];
+filterCategory.innerHTML='<option value="all">Semua Kategori</option>'+cats.map(c=>`<option>${c}</option>`).join("");
+}
+
+function editData(id){
+const d=data.find(x=>x.id===id);
+type.value=d.type;updateCategories();
+category.value=d.category;desc.value=d.desc;amount.value=d.amount;date.value=d.date;
+editId=id;formTitle.innerText="Edit Transaksi";cancelBtn.style.display="block";
+}
+
+function cancelEdit(){
+editId=null;formTitle.innerText="Tambah Transaksi";
+cancelBtn.style.display="none";document.querySelector("form").reset();updateCategories();
+}
+
+function deleteData(id){
+if(confirm("Hapus transaksi?")){
+data=data.filter(d=>d.id!==id);
+localStorage.setItem("dompetHarianData",JSON.stringify(data));
+renderAll();
+}
+}
+
+function toggleTheme(){
+document.body.classList.toggle("dark-mode");
+themeIcon.className=document.body.classList.contains("dark-mode")
+?"bi bi-sun-fill":"bi bi-moon-stars-fill";
+}
+
+const rupiah=n=>"Rp "+n.toLocaleString("id-ID");
 </script>
 
 </body>
