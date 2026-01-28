@@ -7,107 +7,130 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+:root{
+  --primary:#6366f1;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --dark:#0f172a;
+  --glass:rgba(255,255,255,.85);
+}
+
 *{font-family:Poppins}
 
-/* BACKGROUND */
 body{
-  padding-bottom:70px;
+  min-height:100vh;
   background:linear-gradient(135deg,#6366f1,#3b82f6,#22d3ee);
   background-attachment:fixed;
+  padding-bottom:90px;
 }
 
-/* DARK MODE */
 .dark-mode{
-  background:linear-gradient(135deg,#0f172a,#1e293b,#020617);
+  background:linear-gradient(135deg,#020617,#0f172a,#1e293b);
   color:#e5e7eb;
 }
+
+/* HEADER */
+.app-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.app-title{
+  font-weight:700;
+  color:#0f172a;
+}
+.dark-mode .app-title{color:#f8fafc}
 
 /* CARD */
 .card{
   border:none;
-  border-radius:18px;
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(12px);
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  border-radius:20px;
+  background:var(--glass);
+  backdrop-filter:blur(14px);
+  box-shadow:0 15px 35px rgba(0,0,0,.15);
   animation:fadeUp .5s ease;
 }
 .dark-mode .card{
-  background:rgba(30,41,59,.85);
+  background:rgba(15,23,42,.85);
 }
 
-/* HEADER */
-h3,h5{
-  color:#0f172a;
-  font-weight:600;
-}
-.dark-mode h3,
-.dark-mode h5{
-  color:#f8fafc;
-}
-
-/* BALANCE */
-.balance{
-  padding:22px;
-  border-radius:18px;
+/* SUMMARY */
+.summary-card{
   color:#fff;
-  text-align:center;
-  transition:transform .3s ease,box-shadow .3s ease;
-  box-shadow:0 8px 20px rgba(0,0,0,.25);
+  padding:22px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  transition:.3s;
 }
-.balance:hover{
+.summary-card:hover{
   transform:translateY(-6px) scale(1.03);
 }
-.income{background:linear-gradient(135deg,#22c55e,#16a34a)}
-.expense{background:linear-gradient(135deg,#ef4444,#b91c1c)}
-.total{background:linear-gradient(135deg,#6366f1,#4338ca)}
+.bg-income{background:linear-gradient(135deg,#22c55e,#16a34a)}
+.bg-expense{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.bg-balance{background:linear-gradient(135deg,#6366f1,#4338ca)}
+
+.summary-card small{opacity:.85}
+
+/* FILTER */
+.filter-box label{font-size:.9rem;font-weight:500}
 
 /* TRANSACTION */
 .transaction{
   padding:14px;
-  border-radius:14px;
-  margin-bottom:12px;
+  border-radius:16px;
   background:linear-gradient(135deg,#f8fafc,#e5e7eb);
-  animation:fadeUp .4s ease;
-  transition:transform .2s ease,box-shadow .2s ease;
+  margin-bottom:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  transition:.2s;
 }
 .transaction:hover{
   transform:scale(1.02);
-  box-shadow:0 8px 18px rgba(0,0,0,.15);
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
 }
 .dark-mode .transaction{
-  background:linear-gradient(135deg,#1e293b,#0f172a);
+  background:linear-gradient(135deg,#1e293b,#020617);
 }
 
 /* FORM */
 input,select{
-  border-radius:12px!important;
+  border-radius:14px!important;
 }
 
 /* BUTTON */
-button{
+.btn{
   border-radius:14px!important;
-  transition:transform .15s ease,box-shadow .15s ease;
+  font-weight:500;
 }
-button:active{transform:scale(.94)}
+.btn:active{transform:scale(.95)}
 
-/* THEME BUTTON */
+/* FLOAT BUTTON */
 .theme-toggle{
   position:fixed;
-  right:20px;
-  bottom:20px;
-  width:58px;
-  height:58px;
+  right:22px;
+  bottom:22px;
+  width:60px;
+  height:60px;
   border:none;
   border-radius:50%;
   background:linear-gradient(135deg,#22c55e,#4ade80);
   color:#fff;
-  font-size:22px;
-  box-shadow:0 8px 20px rgba(0,0,0,.35);
+  font-size:24px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
   animation:pulse 2.5s infinite;
+}
+
+/* EMPTY STATE */
+.empty{
+  text-align:center;
+  color:#6b7280;
+  padding:30px;
 }
 
 /* ANIMATION */
@@ -117,7 +140,7 @@ button:active{transform:scale(.94)}
 }
 @keyframes pulse{
   0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}
-  70%{box-shadow:0 0 0 14px rgba(34,197,94,0)}
+  70%{box-shadow:0 0 0 16px rgba(34,197,94,0)}
   100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
 }
 </style>
@@ -126,36 +149,60 @@ button:active{transform:scale(.94)}
 <body>
 
 <div class="container my-4">
-<h3><i class="bi bi-wallet2"></i> DompetHarian</h3>
 
-<div class="row my-3">
-<div class="col-md-4 mb-2"><div class="balance income">Pemasukan<br><b id="incomeTotal">Rp 0</b></div></div>
-<div class="col-md-4 mb-2"><div class="balance expense">Pengeluaran<br><b id="expenseTotal">Rp 0</b></div></div>
-<div class="col-md-4 mb-2"><div class="balance total">Saldo<br><b id="balanceTotal">Rp 0</b></div></div>
-</div>
-
-<div class="card p-3 mb-3">
-<div class="row">
-<div class="col-md-6 mb-2">
-<label>📆 Filter Bulan</label>
-<input type="month" id="filterMonth" class="form-control" onchange="renderAll()">
-</div>
-<div class="col-md-6 mb-2">
-<label>📂 Filter Kategori</label>
-<select id="filterCategory" class="form-select" onchange="renderAll()">
-<option value="all">Semua Kategori</option>
-</select>
-</div>
-</div>
+<!-- HEADER -->
+<div class="app-header">
+  <h3 class="app-title"><i class="bi bi-wallet2"></i> DompetHarian</h3>
+  <span class="badge bg-primary">Personal Finance</span>
 </div>
 
+<!-- SUMMARY -->
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="summary-card bg-income">
+      <small>Pemasukan</small>
+      <h4 id="incomeTotal">Rp 0</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="summary-card bg-expense">
+      <small>Pengeluaran</small>
+      <h4 id="expenseTotal">Rp 0</h4>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="summary-card bg-balance">
+      <small>Saldo</small>
+      <h4 id="balanceTotal">Rp 0</h4>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER -->
+<div class="card p-3 mb-3 filter-box">
+<div class="row g-2">
+  <div class="col-md-6">
+    <label>📅 Bulan</label>
+    <input type="month" id="filterMonth" class="form-control" onchange="renderAll()">
+  </div>
+  <div class="col-md-6">
+    <label>📂 Kategori</label>
+    <select id="filterCategory" class="form-select" onchange="renderAll()">
+      <option value="all">Semua Kategori</option>
+    </select>
+  </div>
+</div>
+</div>
+
+<!-- CHART -->
 <div class="card p-3 mb-4">
-<h5>📊 Grafik Keuangan</h5>
+<h5>📊 Ringkasan Keuangan</h5>
 <canvas id="myChart"></canvas>
 </div>
 
-<div class="row">
-<div class="col-md-5 mb-3">
+<div class="row g-3">
+<!-- FORM -->
+<div class="col-md-5">
 <div class="card p-3">
 <h5 id="formTitle">Tambah Transaksi</h5>
 <form onsubmit="return submitData(event)">
@@ -167,15 +214,16 @@ button:active{transform:scale(.94)}
 <input id="desc" class="form-control mb-2" placeholder="Keterangan">
 <input id="amount" type="number" class="form-control mb-2" placeholder="Nominal">
 <input id="date" type="date" class="form-control mb-2">
-<button class="btn btn-success w-100">Simpan</button>
+<button class="btn btn-success w-100">Simpan Transaksi</button>
 <button type="button" class="btn btn-secondary w-100 mt-2" id="cancelBtn" onclick="cancelEdit()" style="display:none">Batal Edit</button>
 </form>
 </div>
 </div>
 
+<!-- LIST -->
 <div class="col-md-7">
 <div class="card p-3">
-<h5>Riwayat Transaksi</h5>
+<h5>📜 Riwayat Transaksi</h5>
 <div id="transactionList"></div>
 </div>
 </div>
@@ -223,16 +271,19 @@ renderTransactions();renderBalance();renderChart();updateFilterCategories();
 function renderTransactions(){
 const f=getFilteredData();
 transactionList.innerHTML=f.length?f.map(d=>`
-<div class="transaction d-flex justify-content-between">
-<div><b>${d.desc}</b><br><small>${d.date} • ${d.category}</small></div>
+<div class="transaction">
 <div>
+<b>${d.desc}</b><br>
+<small>${d.date} • ${d.category}</small>
+</div>
+<div class="text-end">
 <b class="${d.type==="income"?"text-success":"text-danger"}">
 ${d.type==="income"?"+":"-"} Rp ${d.amount.toLocaleString("id-ID")}
 </b><br>
 <button class="btn btn-sm btn-warning" onclick="editData(${d.id})">Edit</button>
 <button class="btn btn-sm btn-danger" onclick="deleteData(${d.id})">Hapus</button>
 </div>
-</div>`).join(""):"<p class='text-center text-muted'>Belum ada transaksi</p>";
+</div>`).join(""):`<div class="empty">📭 Belum ada transaksi</div>`;
 }
 
 function animateValue(el,start,end,d=500){
